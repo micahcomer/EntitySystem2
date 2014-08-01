@@ -18,7 +18,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		gsm = new GameScreenManager(this);		
 		setContentView(gsm);		
-	}
+		
+		}
 
 	
 }

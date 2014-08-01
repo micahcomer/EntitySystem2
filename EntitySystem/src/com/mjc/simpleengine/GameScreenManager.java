@@ -1,7 +1,15 @@
 package com.mjc.simpleengine;
 
+import com.mjc.entitysystem.EntityManager;
+import com.mjc.entitysystem.SystemManager;
+import com.mjc.systems.AnimationSystem;
+import com.mjc.systems.RenderSystem;
+import com.mjc.tools.DrawTools;
+
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Point;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -20,12 +28,32 @@ public class GameScreenManager extends SurfaceView implements SurfaceHolder.Call
 	//our Thread class which houses the game loop
 	private PaintThread thread;
 
+	//References to the Entity and System Managers
+	EntityManager entityManager;
+	SystemManager systemManager;
+	
+	
+	
+	
 	//class constructor
 	public GameScreenManager(Activity context) {
 		super(context);
 		this.context = context;
 		setOnTouchListener(this);
-		InitView();		
+		InitView();	
+		entityManager = new EntityManager();
+		systemManager = new SystemManager();
+		
+		//Initialize Tools
+		DrawTools.resources = context.getResources();
+		DrawTools.context = context;
+		
+		//Test Sample Code
+		
+		int player = AnimationSystem.createNewEntityForAnimation("player_walk", new Point(4,1));		
+		
+		//End Test Sample Code
+		
 	}
 	
 	//initialization code
@@ -35,7 +63,7 @@ public class GameScreenManager extends SurfaceView implements SurfaceHolder.Call
 		holder.addCallback( this);	
 
 		//initialize our Thread class. A call will be made to start it later
-		thread = new PaintThread(holder, context, new Handler());
+		thread = new PaintThread(holder, context, new Handler(), this);
 		setFocusable(true);      
 	}
 
@@ -45,7 +73,7 @@ public class GameScreenManager extends SurfaceView implements SurfaceHolder.Call
 	public void surfaceCreated(SurfaceHolder arg0) {
 		if(thread.state==PaintThread.PAUSED){
 			//When game is opened again in the Android OS
-			thread = new PaintThread(getHolder(), context, new Handler());
+			thread = new PaintThread(getHolder(), context, new Handler(), this);
 			thread.start();
 		}else{
 			//creating the game Thread for the first time
@@ -74,6 +102,17 @@ public class GameScreenManager extends SurfaceView implements SurfaceHolder.Call
 		return true;
 	}
 
+	//Draw and Update
+	public void Draw(Canvas c){
+		RenderSystem.DrawAllEntities(c);		
+	}
+	
+	public void Update(long beforeTime){
+		
+		AnimationSystem.updateAnimations(beforeTime);
+		
+	}
+	
 }
 
 

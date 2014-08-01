@@ -8,6 +8,9 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 public class PaintThread extends Thread{
+	
+	private GameScreenManager gsm;
+	
 	private SurfaceHolder mSurfaceHolder;
 	private Paint mLinePaint;
 	private Paint blackPaint;
@@ -24,8 +27,11 @@ public class PaintThread extends Thread{
 	public final static int RUNNING = 1;
 	public final static int PAUSED = 2;
 
-	public PaintThread(SurfaceHolder surfaceHolder, Context context, Handler handler) {
+	public PaintThread(SurfaceHolder surfaceHolder, Context context, Handler handler, GameScreenManager gsm) {
 
+		//Set GSM
+		this.gsm = gsm;
+		
 		//data about the screen
 		mSurfaceHolder = surfaceHolder;
 		
@@ -52,6 +58,7 @@ public class PaintThread extends Thread{
 			//UPDATE HERE!!!!!!!
 				Log.d("UPDATE", String.valueOf(System.nanoTime()));
 				//TODO: UPDATE CODE GOES HERE
+				gsm.Update(beforeTime);
 			
 			//DRAW
 			Canvas c = null;
@@ -62,9 +69,10 @@ public class PaintThread extends Thread{
 					//clear the screen with the black painter.
 					c.drawRect(0, 0, c.getWidth(), c.getHeight(), blackPaint);
 					//This is where we draw the game engine.
-					//DRAW HERE!!!!!!
-						Log.d("DRAW", String.valueOf(System.nanoTime()));
+					//DRAW HERE!!!!!!						
 						//TODO: DRAW CODE GOES HERE
+						gsm.Draw(c);
+						Log.d("DRAW", String.valueOf(System.nanoTime()));
 				}
 			} finally {
 				// do this in a finally so that if an exception is thrown

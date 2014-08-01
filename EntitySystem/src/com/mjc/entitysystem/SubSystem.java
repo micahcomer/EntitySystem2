@@ -1,5 +1,9 @@
 package com.mjc.entitysystem;
 
-public interface SubSystem {
+public abstract class SubSystem {
 
+	public SubSystem(){
+		SystemManager.addSystem(this);
+	}
+	
 }
