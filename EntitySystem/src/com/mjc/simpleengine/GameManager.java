@@ -1,11 +1,5 @@
 package com.mjc.simpleengine;
 
-import com.mjc.entitysystem.EntityManager;
-import com.mjc.entitysystem.SystemManager;
-import com.mjc.systems.AnimationSystem;
-import com.mjc.systems.RenderSystem;
-import com.mjc.tools.DrawTools;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -16,8 +10,21 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
+import com.mjc.entitysystem.EntityManager;
+import com.mjc.entitysystem.SystemManager;
+import com.mjc.events.ScreenEvent;
+import com.mjc.events.ScreenEventListener;
+import com.mjc.screens.GameScreen;
+import com.mjc.screens.LoadingScreen;
+import com.mjc.screens.MainMenuScreen;
+import com.mjc.screens.OptionsMenuScreen;
+import com.mjc.screens.Screen;
+import com.mjc.screens.SplashScreen;
+import com.mjc.systems.AnimationSystem;
+import com.mjc.tools.DrawTools;
 
-public class GameScreenManager extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener{
+
+public class GameManager extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener, ScreenEventListener{
 
 	//Application context
 	Context context;
@@ -30,13 +37,12 @@ public class GameScreenManager extends SurfaceView implements SurfaceHolder.Call
 
 	//References to the Entity and System Managers
 	EntityManager entityManager;
-	SystemManager systemManager;
-	
-	
+	SystemManager systemManager;	
+	Screen currentScreen;
 	
 	
 	//class constructor
-	public GameScreenManager(Activity context) {
+	public GameManager(Activity context) {
 		super(context);
 		this.context = context;
 		setOnTouchListener(this);
@@ -48,9 +54,10 @@ public class GameScreenManager extends SurfaceView implements SurfaceHolder.Call
 		DrawTools.resources = context.getResources();
 		DrawTools.context = context;
 		
+		
 		//Test Sample Code
 		
-		int player = AnimationSystem.createNewEntityForAnimation("player_walk", new Point(4,1));		
+		AnimationSystem.createNewEntityForAnimation(context, "slash_vertical.png", new Point(4,1));		
 		
 		//End Test Sample Code
 		
@@ -58,6 +65,7 @@ public class GameScreenManager extends SurfaceView implements SurfaceHolder.Call
 	
 	//initialization code
 	public void InitView(){
+		
 		//initialize our screen holder
 		SurfaceHolder holder = getHolder();
 		holder.addCallback( this);	
@@ -68,7 +76,9 @@ public class GameScreenManager extends SurfaceView implements SurfaceHolder.Call
 	}
 
 	//@Override 
-	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {}
+	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
+		
+	}
 
 	public void surfaceCreated(SurfaceHolder arg0) {
 		if(thread.state==PaintThread.PAUSED){
@@ -104,13 +114,44 @@ public class GameScreenManager extends SurfaceView implements SurfaceHolder.Call
 
 	//Draw and Update
 	public void Draw(Canvas c){
-		RenderSystem.DrawAllEntities(c);		
+		currentScreen.draw(c);	
 	}
 	
 	public void Update(long beforeTime){
+		currentScreen.update(beforeTime);
+	}
+
+	
+	//This gets called when its time to switch from one screen to another.  This is prompted by an onScreenEvent call.
+	@Override
+	public boolean onScreenEvent(ScreenEvent e) {
 		
-		AnimationSystem.updateAnimations(beforeTime);
+		switch (e.type){
+		case ShowGameScreen:{
+			currentScreen = new GameScreen(this);
+			return true;
+		}
+		case ShowLoadingScreen:{
+			currentScreen = new LoadingScreen(this);
+			return true;
+		}
+		case ShowMainMenuScreen:{
+			currentScreen = new MainMenuScreen(this);
+			return true;
+		}
+		case ShowOptionsMenuScreen:{
+			currentScreen = new OptionsMenuScreen(this);
+			return true;
+		}
+		case ShowSplashScreen:{
+			currentScreen = new SplashScreen(this);
+			return true;
+		}		
+		}		
 		
+		currentScreen.show();
+		
+		return false;
 	}
 	
 }

@@ -43,10 +43,10 @@ public class EntityManager {
 
 	private static <T extends Component> Component getNewComponent(int newID, Class<T> c){
 		
-		Component returnComp = null;
+		Component returnComp = null;		
 		try {
 			Component newComp = c.newInstance();			
-			returnComp = newComp.getClass().asSubclass(c).newInstance();
+			returnComp = newComp.getClass().asSubclass(c).newInstance().newInstance();
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,8 +54,7 @@ public class EntityManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-		returnComp = returnComp.newInstance();
-		returnComp.ID = newID;
+		returnComp.ID = getNewID();
 		return returnComp;
 	}
 	

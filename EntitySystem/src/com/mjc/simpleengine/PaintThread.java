@@ -9,7 +9,7 @@ import android.view.SurfaceHolder;
 
 public class PaintThread extends Thread{
 	
-	private GameScreenManager gsm;
+	private GameManager gsm;
 	
 	private SurfaceHolder mSurfaceHolder;
 	private Paint mLinePaint;
@@ -27,7 +27,7 @@ public class PaintThread extends Thread{
 	public final static int RUNNING = 1;
 	public final static int PAUSED = 2;
 
-	public PaintThread(SurfaceHolder surfaceHolder, Context context, Handler handler, GameScreenManager gsm) {
+	public PaintThread(SurfaceHolder surfaceHolder, Context context, Handler handler, GameManager gsm) {
 
 		//Set GSM
 		this.gsm = gsm;

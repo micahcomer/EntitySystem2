@@ -11,15 +11,13 @@ public class MainActivity extends Activity {
 	//surface is created.  The update and draw methods for the game
 	//are inside the paint thread.
 	
-	GameScreenManager gsm;
+	GameManager gsm;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {		
 		super.onCreate(savedInstanceState);
-		gsm = new GameScreenManager(this);		
-		setContentView(gsm);		
-		
-		}
-
-	
+		gsm = new GameManager(this);		
+		setContentView(gsm);	
+		}	
 }
